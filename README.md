@@ -1,4 +1,4 @@
-# Movies and Theaters API
+man# Movies and Theaters API
 
 Practice creating an API with Django Rest Framework. Week 2 of Hack University's Web Frameworks class.
 

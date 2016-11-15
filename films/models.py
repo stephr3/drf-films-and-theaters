@@ -9,6 +9,8 @@ class Genre(models.Model):
     class Meta:
         ordering = ('name',)
 
+    def __str__(self):
+        return self.name
 
 class Film(models.Model):
     title = models.CharField(max_length=100)
@@ -17,6 +19,9 @@ class Film(models.Model):
 
     class Meta:
         ordering = ('title',)
+
+    def __str__(self):
+        return self.title
 
 class Theater(models.Model):
     name = models.CharField(max_length=200)
