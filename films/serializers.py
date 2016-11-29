@@ -22,7 +22,7 @@ class FilmWriteSerializer(serializers.ModelSerializer):
 
 class TheaterSerializer(serializers.ModelSerializer):
     films = FilmSerializer(many=True) # nest a list of films
-
+# make with primary keys
     class Meta:
         model = Theater
         fields = ('id', 'name', 'city', 'films')
