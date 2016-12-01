@@ -6,40 +6,76 @@ import pdb
 
 class FilmList(generics.ListCreateAPIView):
     queryset = Film.objects.all()
-    serializer_class = FilmSerializer
 
     def get(self, request, *args, **kwargs):
-        first_letter = request.GET.get('first_letter', '')
-        year_prod = request.GET.get('year_prod', '')
-        if first_letter:
-            if year_prod:
-                films = Film.objects.filter(title__istartswith=first_letter).filter(year_prod=year_prod)
-            else:
-                films = Film.objects.filter(title__istartswith=first_letter)
-        elif year_prod:
-            films = Film.objects.filter(year_prod=year_prod)
+        k = request.GET.keys()
+        filter_dict = {}
+        if(k):
+            for key, value in request.GET.items():
+                filter_dict[key] = value
+            films = Film.objects.filter(**filter_dict)
+            serialized_films = FilmSerializer(films, many=True)
+            return Response(serialized_films.data)
         else:
-            films = Film.objects.all()
+            return Response(FilmSerializer(Film.objects.all(), many=True).data)
 
-        serialized_films = FilmSerializer(films, many=True)
-        return Response(serialized_films.data)
+    def get_serializer_class(self):
+        if(self.request.method == 'GET'):
+            return FilmSerializer
+        return FilmWriteSerializer
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Film.objects.all()
-    serializer_class = FilmSerializer
+
+    def get_serializer_class(self):
+        if(self.request.method == 'GET'):
+            return FilmSerializer
+        return FilmWriteSerializer
 
 class TheaterList(generics.ListCreateAPIView):
     queryset = Theater.objects.all()
     serializer_class = TheaterSerializer
 
+    def get(self, request, *args, **kwargs):
+        k = request.GET.keys()
+        filter_dict = {}
+        if(k):
+            for key, value in request.GET.items():
+                filter_dict[key] = value
+            theaters = Theater.objects.filter(**filter_dict)
+            serialized_theaters = TheaterSerializer(theaters, many=True)
+            return Response(serialized_theaters.data)
+        else:
+            return Response(TheaterSerializer(Theater.objects.all(), many=True).data)
+
+    def get_serializer_class(self):
+        if(self.request.method == 'GET'):
+            return TheaterSerializer
+        return TheaterWriteSerializer
+
 class TheaterDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Theater.objects.all()
     serializer_class = TheaterSerializer
+
+    def get_serializer_class(self):
+        if(self.request.method == 'GET'):
+            return TheaterSerializer
+        return TheaterWriteSerializer
 
 class GenreList(generics.ListCreateAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
+    def get_serializer_class(self):
+        if(self.request.method == 'GET'):
+            return GenreSerializer
+        return GenreWriteSerializer
+
 class GenreDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+
+    def get_serializer_class(self):
+        if(self.request.method == 'GET'):
+            return GenreSerializer
+        return GenreWriteSerializer
