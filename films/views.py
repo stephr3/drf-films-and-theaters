@@ -1,10 +1,21 @@
 from films.models import *
 from films.serializers import *
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, permissions
+from films.permissions import IsOwnerOrReadOnly
 import pdb
 
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
 class FilmList(generics.ListCreateAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     queryset = Film.objects.all()
 
     def get(self, request, *args, **kwargs):
@@ -19,6 +30,9 @@ class FilmList(generics.ListCreateAPIView):
         else:
             return Response(FilmSerializer(Film.objects.all(), many=True).data)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     def get_serializer_class(self):
         if(self.request.method == 'GET'):
             return FilmSerializer
@@ -26,6 +40,7 @@ class FilmList(generics.ListCreateAPIView):
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Film.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
     def get_serializer_class(self):
         if(self.request.method == 'GET'):

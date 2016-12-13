@@ -1,5 +1,13 @@
 from rest_framework import serializers
 from films.models import *
+from django.contrib.auth.models import User
+
+class UserSerializer(serializers.ModelSerializer):
+    films = serializers.PrimaryKeyRelatedField(many=True, queryset=Film.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'films')
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,11 +22,11 @@ class GenreWriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'film_set')
 
 class FilmSerializer(serializers.ModelSerializer):
-    # genre = GenreSerializer()
+    owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
         model = Film
-        fields = ('id', 'title', 'year_prod', 'genre', 'theater_set')
+        fields = ('id', 'title', 'year_prod', 'genre', 'theater_set', 'owner')
         depth = 1
 
 class FilmWriteSerializer(serializers.ModelSerializer):
@@ -29,8 +37,7 @@ class FilmWriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'year_prod', 'genre', 'theater_set')
 
 class TheaterSerializer(serializers.ModelSerializer):
-#     films = FilmSerializer(many=True) # nest a list of films
-# # make with primary keys
+
     class Meta:
         model = Theater
         fields = ('id', 'name', 'city', 'films')

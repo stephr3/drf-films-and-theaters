@@ -25,7 +25,9 @@ urlpatterns = [
     url(r'^theaters$', views.TheaterList.as_view()),
     url(r'^theaters/(?P<pk>[0-9]+)$', views.TheaterDetail.as_view()),
     url(r'^genres$', views.GenreList.as_view()),
-    url(r'^genres/(?P<pk>[0-9]+)$', views.GenreDetail.as_view())
+    url(r'^genres/(?P<pk>[0-9]+)$', views.GenreDetail.as_view()),
+    url(r'^users/$', views.UserList.as_view()),
+    url(r'^users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
