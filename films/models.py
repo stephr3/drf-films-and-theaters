@@ -29,6 +29,12 @@ class Theater(models.Model):
     name = models.CharField(max_length=200)
     city = models.CharField(max_length=100)
     films = models.ManyToManyField(Film)
+    owner = models.ForeignKey(
+        'auth.User',
+        related_name='theaters',
+        on_delete=models.CASCADE,
+        null=True
+    )
 
     class Meta:
         ordering = ('city',)

@@ -50,7 +50,8 @@ class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
 class TheaterList(generics.ListCreateAPIView):
     queryset = Theater.objects.all()
     serializer_class = TheaterSerializer
-
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                      IsOwnerOrReadOnly)
     def get(self, request, *args, **kwargs):
         k = request.GET.keys()
         filter_dict = {}
@@ -68,9 +69,14 @@ class TheaterList(generics.ListCreateAPIView):
             return TheaterSerializer
         return TheaterWriteSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 class TheaterDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Theater.objects.all()
     serializer_class = TheaterSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                      IsOwnerOrReadOnly)
 
     def get_serializer_class(self):
         if(self.request.method == 'GET'):

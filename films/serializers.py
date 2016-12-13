@@ -4,10 +4,11 @@ from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     films = serializers.PrimaryKeyRelatedField(many=True, queryset=Film.objects.all())
+    theaters = serializers.PrimaryKeyRelatedField(many=True, queryset=Film.objects.all())
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'films')
+        fields = ('id', 'username', 'films', 'theaters')
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,10 +38,10 @@ class FilmWriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'year_prod', 'genre', 'theater_set')
 
 class TheaterSerializer(serializers.ModelSerializer):
-
+    owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Theater
-        fields = ('id', 'name', 'city', 'films')
+        fields = ('id', 'name', 'city', 'films', 'owner')
         depth = 1
 
 class TheaterWriteSerializer(serializers.ModelSerializer):
