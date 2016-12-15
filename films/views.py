@@ -3,8 +3,26 @@ from films.serializers import *
 from rest_framework.response import Response
 from rest_framework import generics, permissions
 from films.permissions import IsOwnerOrReadOnly
+from rest_framework.decorators import api_view
 import pdb
+import requests
 
+@api_view(['GET'])
+def film_title(request, format=None):
+    """
+    Get a list of films that have the word 'hunger' in the title
+    """
+    if request.method == 'GET':
+        films = requests.get('http://www.omdbapi.com/?type=movie&s=hunger')
+        json = films.json()
+        a = []
+        for key in json['Search']:
+            films_dict = {}
+            films_dict['title'] = key['Title']
+            films_dict['year_prod'] = key['Year']
+            a.append(films_dict)
+        serializedFilm = FilmSerializer(a, many=True)
+        return Response(serializedFilm.data)
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
